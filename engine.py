@@ -1,33 +1,40 @@
-from typing import Set, Iterable, Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from tcod.context import Context
 from tcod.console import Console
+from tcod.map import compute_fov
 
-from entity import Entity
-from game_map import GameMap
 from input_handlers import EventHandler
 
+if TYPE_CHECKING:
+	from entity import Entity
+	from game_map import GameMap
+
 class Engine:
-	def __init__(self, entities: Set[Entity], event_handler: EventHandler, game_map: GameMap, player: Entity):
-		self.entities = entities
-		self.event_handler = event_handler
-		self.game_map = game_map
+	game_map: GameMap
+
+	def __init__(self, player: Entity):
+		self.event_handler: EventHandler = EventHandler(self)
 		self.player = player
 
-	def handle_events(self, events: Iterable[Any]) -> None:
-		for event in events:
-			action = self.event_handler.dispatch(event)
+	def handle_enemy_turns(self) -> None:
+		for entity in self.game_map.entities - {self.player}:
+			print(f'The {entity.name} wonders when it will get to take a real turn.')
 
-			if action is None:
-				continue
-
-			action.perform(self, self.player)
+	def update_fov(self) -> None:
+		"""Recomupte the visible area based on the player's position."""
+		self.game_map.visible[:] = compute_fov(
+			self.game_map.tiles["transparent"],
+			(self.player.x, self.player.y),
+			radius=8
+		)
+		# If a tile is visible, add it to explored
+		self.game_map.explored |= self.game_map.visible
 
 	def render(self, console: Console, context: Context) -> None:
 		self.game_map.render(console)
-
-		for entity in self.entities:
-			console.print(entity.x, entity.y, entity.char, fg=entity.color)
 
 		context.present(console)
 
