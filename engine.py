@@ -21,7 +21,8 @@ class Engine:
 
 	def handle_enemy_turns(self) -> None:
 		for entity in self.game_map.entities - {self.player}:
-			print(f'The {entity.name} wonders when it will get to take a real turn.')
+			if entity.ai:
+				entiy.ai.perform()
 
 	def update_fov(self) -> None:
 		"""Recomupte the visible area based on the player's position."""
