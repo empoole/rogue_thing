@@ -29,7 +29,7 @@ class Fighter(BaseComponent):
 		if self._hp == 0 and self.entity.ai:
 			self.die()
 
-	def die(self) -> None():
+	def die(self) -> None:
 		if self.engine.player is self.entity:
 			death_message = "You died."
 			death_message_color = color.player_die

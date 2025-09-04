@@ -65,7 +65,7 @@ class EventHandler(tcod.event.EventDispatch[Action]):
 		if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
 			self.engine.mouse_location = event.tile.x, event.tile.y
 
-	def ev_quit(self, event: tcod.event.Quit()) -> Optional[Action]:
+	def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
 		raise SystemExit()
 
 	def on_render(self, console: tcod.Console) -> None:
@@ -115,7 +115,7 @@ class GameOverEventHandler(EventHandler):
 
 			action.perform()
 
-	def ev_keydown(self, event: tcod.event.KeyDown) -> Option[Action]:
+	def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
 		action: Optional[Action] = None
 
 		key = event.sym
@@ -140,8 +140,8 @@ class HistoryViewer(EventHandler):
 
 		# Draw a frame with a custom title banner
 		log_console.draw_frame(0, 0, log_console.width, log_console.height)
-		log_console.print_box(
-			0, 0, log_console.width, 1, "┤Message history├", alignment=libtcodpy.CENTER
+		log_console.print(
+			x=0, y=0, width=log_console.width, height=1, string="┤Message history├", alignment=libtcodpy.CENTER
 		)
 
 		# Render the message log using the cursor

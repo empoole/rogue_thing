@@ -6,7 +6,7 @@ import tcod
 import tile_types
 import entity_factories
 
-from typing import Iterator, Tuple, TYPE_CHECKING
+from typing import Iterator, Tuple, List, TYPE_CHECKING
 from game_map import GameMap
 
 if TYPE_CHECKING:
