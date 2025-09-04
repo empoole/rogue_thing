@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import exceptions
+
 from typing import TYPE_CHECKING
 
 from tcod.console import Console
@@ -26,7 +28,10 @@ class Engine:
 	def handle_enemy_turns(self) -> None:
 		for entity in self.game_map.entities - {self.player}:
 			if entity.ai:
-				entity.ai.perform()
+				try:
+					entity.ai.perform()
+				except exceptions.Impossible:
+					pass # No message if AI tries to do something impossible
 
 	def update_fov(self) -> None:
 		"""Recomupte the visible area based on the player's position."""
