@@ -23,7 +23,7 @@ class Engine:
 	def handle_enemy_turns(self) -> None:
 		for entity in self.game_map.entities - {self.player}:
 			if entity.ai:
-				entiy.ai.perform()
+				entity.ai.perform()
 
 	def update_fov(self) -> None:
 		"""Recomupte the visible area based on the player's position."""

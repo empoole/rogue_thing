@@ -81,6 +81,8 @@ class MainGameEventHandler(EventHandler):
 			action = BumpAction(player, dx, dy)
 		elif key in WAIT_KEYS:
 			action = WaitAction(player)
+		elif key == tcod.event.KeySym.ESCAPE:
+			action = EscapeAction(player)
 
 		return action
 
@@ -99,7 +101,7 @@ class GameOverEventHandler(EventHandler):
 
 		key = event.sym
 
-		if key == tcod.event.K_ESCAPE:
+		if key == tcod.event.KeySym.ESCAPE:
 			action = EscapeAction(self.engine.player)
 
 		return action
