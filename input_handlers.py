@@ -54,6 +54,11 @@ WAIT_KEYS = {
 	tcod.event.KeySym.CLEAR,
 }
 
+CONFIRM_KEYS = {
+	tcod.event.KeySym.RETURN,
+	tcod.event.KeySym.KP_ENTER
+}
+
 CURSOR_Y_KEYS = {
 	tcod.event.KeySym.UP: -1,
 	tcod.event.KeySym.DOWN: 1,
@@ -166,7 +171,7 @@ class InventoryEventHandler(AskUserEventHandler):
 		console.draw_frame(
 			x=x,
 			y=y,
-			width=witdth,
+			width=width,
 			height=height,
 			title=self.TITLE,
 			clear=True,
@@ -215,7 +220,48 @@ class InventoryDropHandler(InventoryEventHandler):
 
 	def on_item_selected(self, item: Item) -> Optional[Action]:
 		"""Drop this item."""
-		return action.DropItem(self.engine.player, item)
+		return actions.DropItem(self.engine.player, item)
+
+class SelectIndexHandler(AskUserEventHandler):
+	"""Handles asking the user for an index on the map."""
+
+	def __init__(self, engine: Engine):
+		"""Sets the cursor to the player when this handler is constructed."""
+		super().__init__(engine)
+		player = self.engine.player
+		engine.mouse_location = player.x, player.y
+
+	def on_render(self, console: tcod.Console) -> None:
+			"""Highlight the tile under the cursor"""
+			super().on_render(console)
+			x, y = self.engine.mouse_location
+			console.tiles_rgb["bg"][x, y] = color.white
+			console.tiles_rgb["fg"][x, y] = color.black
+
+	def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+		"""Check for key movement on confirmation keys"""
+		key = event.sym
+		if key in MOVE_KEYS:
+			modifier = 1 # holding modifier keys will speed up key movement
+			if event.mod & (tcod.event.KeyMod.LSHIFT | tcod.event.KeyMod.RSHIFT):
+				modifier *= 5
+			if event.mod & (tcod.event.KeyMod.LCTRL | tcod.event.KeyMod.RCTRL):
+				modifier *= 10
+			if event.mod & (tcod.event.KeyMod.LALT | tcod.event.KeyMod.RALT):
+				modifier *= 20
+    
+			x, y = self.engine.mouse_location
+			dx, dy = MOVE_KEYS[key]
+			x += dx * modifier
+			y += dy * modifier
+			# clamp the cursor index to map size
+			x = max(0, min(x, self.engine.game_map.width - 1))
+			y = max(0, min(y, self.engine.game_map.height - 1))
+			self.engine.mouse_location = x, y
+			return None
+		elif key in CONFIRM_KEYS:
+			return self.on_index_selected(*self.engine.mouse_location)
+		return super().ev_keydown(event)
 
 class MainGameEventHandler(EventHandler):
 	def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
