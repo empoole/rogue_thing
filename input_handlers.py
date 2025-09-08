@@ -263,6 +263,23 @@ class SelectIndexHandler(AskUserEventHandler):
 			return self.on_index_selected(*self.engine.mouse_location)
 		return super().ev_keydown(event)
 
+	def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown) -> Optional[Action]:
+		"""Left click confirms selection."""
+		if self.engine.game_map.in_bounds(*event.title):
+			if event.button == 1:
+				return self.on_index_selected(*event.title)
+		return super().ev_mousebuttondown(event)
+
+	def on_index_selected():
+		"""Called when an index is selected."""
+		raise NotImplementedError()
+
+class LookHandler(SelectIndexHandler):
+	"""Lets the player look around using the keyboard."""
+	def on_index_selected(self, x: int, y: int) -> None:
+		"""Return to main handler"""
+		self.engine.event_handler = MainGameEventHandler(self.engine)
+
 class MainGameEventHandler(EventHandler):
 	def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
 		action: Optional[Action] = None
@@ -286,6 +303,8 @@ class MainGameEventHandler(EventHandler):
 			self.engine.event_handler = InventoryActivateHandler(self.engine)
 		elif key == tcod.event.KeySym.D:
 			self.engine.event_handler = InventoryDropHandler(self.engine)
+		elif key == tcod.event.KeySym.SLASH:
+			self.engine.event_handler = LookHandler(self.engine)
 
 		return action
 
