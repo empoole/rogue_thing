@@ -12,7 +12,7 @@ from actions import (
 	WaitAction
 )
 from tcod import libtcodpy
-from typing import Optional, TYPE_CHECKING
+from typing import Callable, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from engine import Engine
@@ -279,6 +279,51 @@ class LookHandler(SelectIndexHandler):
 	def on_index_selected(self, x: int, y: int) -> None:
 		"""Return to main handler"""
 		self.engine.event_handler = MainGameEventHandler(self.engine)
+
+class SingleRangedAttackHandler(SelectIndexHandler):
+	"""Handles targeting a single enemy."""
+	def __init__(
+		self, enigne: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
+	):
+		super().__init__(engine)
+
+		self.callback = callback
+
+	def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+		return self.callback((x, y))
+
+class AreaRangedAttackHandler(SelectIndexHandler):
+	"""Handles targeting an area with a given radius."""
+
+	def __init__(
+		self,
+		engine: Engine,
+		radius: int,
+		callback: Callable[[Tuple[int, int]], Optional[Action]],
+	):
+		super().__init__(engine)
+
+		self.radius = radius
+		self.callback = callback
+
+	def on_render(self, console: tcod.Console) -> None:
+		"""Highlight the tile under the cursor."""
+		super().on_render(console)
+
+		x, y = self.engine.mouse_location
+
+		# Draw a rectangle around the targeted area
+		console.draw_frame(
+			x=x - self.radius - 1,
+			y=y - self.radius - 1,
+			width=self.radius ** 2,
+			height=self.radius ** 2,
+			fg=color.red,
+			clear=False,
+		)
+
+	def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+		return self.callback((x, y))
 
 class MainGameEventHandler(EventHandler):
 	def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:

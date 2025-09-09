@@ -27,9 +27,10 @@ class Engine:
 
 	def handle_enemy_turns(self) -> None:
 		for entity in self.game_map.entities - {self.player}:
-			if entity.ai:
+			if hasattr(entity, 'ai'):
 				try:
-					entity.ai.perform()
+					if hasattr(entity.ai, 'perform'):
+						entity.ai.perform()
 				except exceptions.Impossible:
 					pass # No message if AI tries to do something impossible
 
