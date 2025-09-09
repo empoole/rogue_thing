@@ -7,7 +7,7 @@ import input_handlers
 import color
 import setup_game
 
-def save_game(handler: input_handers.BaseEventHandler, filename: str) -> None:
+def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
 	"""If the current event handler has an active Engine, save it."""
 	if isinstance(handler, input_handlers.EventHandler):
 		handler.engine.save_as(filename)
@@ -23,9 +23,9 @@ def main() -> None:
 	
 	handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
 
-	with tcod.context.new_terminal(
-		screen_width,
-		screen_height,
+	with tcod.context.new(
+		columns=screen_width,
+		rows=screen_height,
 		tileset=tileset,
 		title="RL PY",
 		vsync=True,
@@ -53,7 +53,7 @@ def main() -> None:
 		except SystemExit:
 			save_game(handler, "savegame.sav")
 			raise
-		except BaseException
+		except BaseException:
 			save_game(handler, "savegame.sav")
 			raise
 

@@ -10,7 +10,7 @@ import components.ai
 from components.base_component import BaseComponent
 from exceptions import Impossible
 from input_handlers import (
-	ActionOrHandler
+	ActionOrHandler,
 	AreaRangedAttackHandler,
 	SingleRangedAttackHandler,
 )

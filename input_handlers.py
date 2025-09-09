@@ -403,11 +403,11 @@ class MainGameEventHandler(EventHandler):
 class GameOverEventHandler(EventHandler):
 	def on_quit(self) -> None:
 		"""Handle exiting out of a finished game"""
-		if os.path.exists("savegame.sav")
+		if os.path.exists("savegame.sav"):
 			os.remove("savegame.sav")
 		raise exceptions.QuitWithoutSaving()
 
-	def ev_quit(self, tcod.event.Quit) -> None:
+	def ev_quit(self, event: tcod.event.Quit) -> None:
 		self.on_quit()
 
 	def ev_keydown(self, event: tcod.event.KeyDown) -> None:
@@ -458,5 +458,5 @@ class HistoryViewer(EventHandler):
 		elif event.sym == tcod.event.KeySym.END:
 			self.cursor = self.log_length - 1
 		else:
-			retunr MainGameEventHandler(self.engine)
+			return MainGameEventHandler(self.engine)
 		return None
