@@ -38,16 +38,16 @@ def main() -> None:
 				handler.on_render(console=root_console)
 				context.present(root_console)
 
-			try:
-				for event in tcod.event.wait():
-					context.convert_event(event)
-					handler.handle_events(event)
-			except Exception:
-				traceback.print_exc()
-				if isinstance(handler, input_handlers.EventHandler):
-					handler.engine.message_log.add_message(
-						traceback.format_exec(), color.error
-					)
+				try:
+					for event in tcod.event.wait():
+						context.convert_event(event)
+						handler.handle_events(event)
+				except Exception:
+					traceback.print_exc()
+					if isinstance(handler, input_handlers.EventHandler):
+						handler.engine.message_log.add_message(
+							traceback.format_exec(), color.error
+						)
 		except exceptions.QuitWithoutSaving:
 			raise
 		except SystemExit:
