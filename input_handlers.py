@@ -150,7 +150,7 @@ class EventHandler(BaseEventHandler):
 		if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
 			self.engine.mouse_location = event.tile.x, event.tile.y
 
-	def on_render(self, console: tcod.Console) -> None:
+	def on_render(self, console: tcod.console.Console) -> None:
 		self.engine.render(console)
 
 class AskUserEventHandler(EventHandler):
@@ -377,8 +377,14 @@ class MainGameEventHandler(EventHandler):
 		action: Optional[Action] = None
 
 		key = event.sym
+		modifier = event.mod
 
 		player = self.engine.player
+
+		if key == tcod.event.KeySym.PERIOD and modifier & (
+			tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
+		):
+			return actions.TakeStairsAction(player)
 
 		if key in MOVE_KEYS:
 			dx, dy = MOVE_KEYS[key]
