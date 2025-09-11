@@ -41,7 +41,7 @@ def main() -> None:
 				try:
 					for event in tcod.event.wait():
 						context.convert_event(event)
-						handler.handle_events(event)
+						handler = handler.handle_events(event)
 				except Exception:
 					traceback.print_exc()
 					if isinstance(handler, input_handlers.EventHandler):

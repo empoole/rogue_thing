@@ -14,7 +14,7 @@ from actions import (
 	WaitAction
 )
 from tcod import libtcodpy
-from typing import Callable, Optional, TYPE_CHECKING, Union
+from typing import Callable, Optional, TYPE_CHECKING, Tuple, Union
 
 if TYPE_CHECKING:
 	from engine import Engine
@@ -288,11 +288,11 @@ class SelectIndexHandler(AskUserEventHandler):
 		key = event.sym
 		if key in MOVE_KEYS:
 			modifier = 1 # holding modifier keys will speed up key movement
-			if event.mod & (tcod.event.KeyMod.LSHIFT | tcod.event.KeyMod.RSHIFT):
+			if event.mod & (tcod.event.Modifier.LSHIFT | tcod.event.Modifier.RSHIFT):
 				modifier *= 5
-			if event.mod & (tcod.event.KeyMod.LCTRL | tcod.event.KeyMod.RCTRL):
+			if event.mod & (tcod.event.Modifier.LCTRL | tcod.event.Modifier.RCTRL):
 				modifier *= 10
-			if event.mod & (tcod.event.KeyMod.LALT | tcod.event.KeyMod.RALT):
+			if event.mod & (tcod.event.Modifier.LALT | tcod.event.Modifier.RALT):
 				modifier *= 20
     
 			x, y = self.engine.mouse_location
@@ -330,7 +330,7 @@ class LookHandler(SelectIndexHandler):
 class SingleRangedAttackHandler(SelectIndexHandler):
 	"""Handles targeting a single enemy."""
 	def __init__(
-		self, enigne: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
+		self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
 	):
 		super().__init__(engine)
 
@@ -382,7 +382,7 @@ class MainGameEventHandler(EventHandler):
 		player = self.engine.player
 
 		if key == tcod.event.KeySym.PERIOD and modifier & (
-			tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
+			tcod.event.Modifier.LSHIFT | tcod.event.Modifier.RSHIFT
 		):
 			return actions.TakeStairsAction(player)
 
@@ -391,12 +391,15 @@ class MainGameEventHandler(EventHandler):
 			action = BumpAction(player, dx, dy)
 		elif key in WAIT_KEYS:
 			action = WaitAction(player)
+
 		elif key == tcod.event.KeySym.ESCAPE:
 			raise SystemExit()
 		elif key == tcod.event.KeySym.V:
 			return HistoryViewer(self.engine)
+
 		elif key == tcod.event.KeySym.G:
 			action = PickupAction(player)
+
 		elif key == tcod.event.KeySym.I:
 			return InventoryActivateHandler(self.engine)
 		elif key == tcod.event.KeySym.D:

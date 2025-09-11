@@ -68,7 +68,7 @@ class ConfusedEnemy(BaseAI):
 			self.entity.ai = self.previous_ai
 		else:
 			# move and attack randomly
-			direction_x, direction_y = random_choice(
+			direction_x, direction_y = random.random_choice(
 				[
 					(-1, -1),
 					(0, -1),

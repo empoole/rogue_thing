@@ -51,7 +51,6 @@ def new_game() -> Engine:
 	engine.message_log.add_message(
 		"Welcome...", color.welcome_text
 	)
-
 	return engine
 
 def load_game(filename: str) -> Engine:

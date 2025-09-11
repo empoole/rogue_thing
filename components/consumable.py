@@ -104,7 +104,7 @@ class FireballDamageConsumable(Consumable):
 			callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
 		)
 
-	def activate(self, action: action.ItemAction) -> None:
+	def activate(self, action: actions.ItemAction) -> None:
 		target_xy = action.target_xy
 
 		if not self.engine.game_map.visible[target_xy]:
