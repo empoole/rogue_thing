@@ -48,7 +48,7 @@ def new_game() -> Engine:
 	)
 
 	dagger = copy.deepcopy(entity_factories.dagger)
-	lether_armor = copy.deepcopy(entity_factories.leather_armor)
+	leather_armor = copy.deepcopy(entity_factories.leather_armor)
 
 	dagger.parent = player.inventory
 	leather_armor.parent = player.inventory

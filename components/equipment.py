@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class Equipment(BaseComponent):
 	parent: Actor
 
-	__init__(self, weapon: Optional[Item] = None, armor: Optional[Item] = None):
+	def __init__(self, weapon: Optional[Item] = None, armor: Optional[Item] = None):
 		self.weapon = weapon
 		self.armor = armor
 
